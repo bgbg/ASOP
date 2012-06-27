@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>ASOP by bgbg</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>ASOP</h1>
+        <p>ASOP (Adaptive Search for Optimal Populations), a global optimization algorithm</p>
+
+        <p class="view"><a href="https://github.com/bgbg/ASOP">View the Project on GitHub <small>bgbg/ASOP</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/bgbg/ASOP/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/bgbg/ASOP/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/bgbg/ASOP">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>ASOP (Adaptive Search for Optimal Populations) optimization algorithm</h1>
+
+<h2>What is ASOP?</h2>
+
+<p>This is a Python implementation of ASOP -- Adaptive Search for Optimal
+Populations. ASOP is a general global optimization algorithm, that was
+partially inspired by <a href="http://onlinelibrary.wiley.com/doi/10.1002/prot.21847/full">ISE</a>, <a href="http://en.wikipedia.org/wiki/Particle_filter">Particle filter</a>, <a href="http://en.wikipedia.org/wiki/Genetic_algorithm">Genetic Algorithms</a>
+and other techniques and algorithms.</p>
+
+<p>This is a work in progress. Unfortunately, almost no documentation is
+available yet. You are more than welcome to <a href="mailto:boris@gorelik.net">contact the author</a> for more
+details, help and help suggestions.</p>
+
+<h2>Cloning ASOP</h2>
+
+<p>The best way to obtain this library is to go its <a href="https://github.com/bgbg/asop/tags">Github tags page</a> and
+to download the latest tag.</p>
+
+<p>If you decided to clone ASOP, bare in mind that ASOP repository contains
+a submodule (<a href="https://github.com/bgbg/randomArbitrary">randomArbitrary</a> -- lirandom number generators for arbitrary
+distributions). Therefore, the proper way of cloning ASOP is</p>
+
+<pre><code>git clone --recursive &lt;path-to-ASOP&gt;
+</code></pre>
+
+<p>If you forgot to clone recursively, you will see an empty directory
+named <code>randomArbitrary</code>. Don't worry. Just go to the ASOP
+directory, and run the following command:</p>
+
+<pre><code>git submodule update --init
+</code></pre>
+
+<h2>Contacting the author</h2>
+
+<p>ASOP was written by Boris Gorelik. Author's personal site is
+<a href="http://gorelik.net">http://gorelik.net</a>, author's e-mail is <a href="mailto:boris@gorelik.net">boris@gorelik.net</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/bgbg">bgbg</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
