@@ -3,3 +3,5 @@
 !.gitignore
 !.git*
 *.orig
+
+./*.png
