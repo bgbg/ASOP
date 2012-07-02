@@ -133,7 +133,8 @@ class VariableBase(object):
 
         Keyword parameters:
         _probabilityCalculationStrategy: EXPERIMENTAL parameter. One of the
-        following: "RAW", "CENTERED", "STANDARDIZED"
+        following: "RAW", "CENTERED", "STANDARDIZED".
+        Default: "STANDARDIZED"
 
 
         If specified, the two parameters have to be iterable and of the same
@@ -163,9 +164,8 @@ class VariableBase(object):
         if name is None:
             name = ''
 
-        strategy = kwparam.pop('_probabilityCalculationStrategy', None)
-        if strategy is None:
-            strategy = 'RAW'
+        strategy = kwparam.pop('_probabilityCalculationStrategy',
+                               'STANDARDIZED')
         self._probabilityCalculationStrategy = strategy
         self.name = name
         pValues = self._probabilityFromScore()
