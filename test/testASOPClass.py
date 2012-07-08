@@ -11,44 +11,52 @@ class TestInstatination(unittest.TestCase):
 
     def setUp(self):
 
-        def funcOneParam(x):
-            return x * x
+        def func1(p):
+            return np.sum(np.square(p))
 
-        def funcTwoParams(x, y):
-            #Rosenbrock function
-            return(1 - x) ** 2 + 100 * (y - x**2)**2
+        def func2(x):
+            return np.sum(1.0 / x)
 
-        def funcThreeParams(x, y, z):
-            return funcTwoParams(x, y) + z * z
-        self.lFunctions = [funcOneParam, funcTwoParams, funcThreeParams]
+        def func3(x):
+            return np.sum(np.exp(-x))
 
-    def testDimensionsAsNone(self):
+        self.lFunctions = [func1, func2, func3]
+
+    def testDimensionsEmptyOrNone(self):
         '''Supply None as dimensions argument'''
-        for (i, f) in enumerate(self.lFunctions):
-            n = i + 1
-            optimizer = ASOP(f)
-            self.assertTrue(len(optimizer.dimensions) == n)
+        for f in self.lFunctions:
+            try:
+                ASOP(f)
+            except TypeError:
+                pass
+            else:
+                self.fail()
+            try:
+                ASOP(f, None)
+            except (ValueError, AssertionError):
+                pass
+            else:
+                self.fail()
 
 
     def testDimensionsAsNumber(self):
         '''Supply a number as dimensions argument'''
         #also supply a string that can be converted to int
-        for (i, f) in enumerate(self.lFunctions):
-            n = i + 1
-            optimizer = ASOP(f, n)
-            self.assertTrue(len(optimizer.dimensions) == n)
-
-            optimizer = ASOP(f, str(n))
-            self.assertTrue(optimizer.nDimensions == n)
+        for n in [1, 2, 4, 5]:
+            for f in self.lFunctions:
+                optimizer = ASOP(f, n)
+                self.assertTrue(len(optimizer.dimensions) == n)
+                optimizer = ASOP(f, str(n))
+                self.assertTrue(optimizer.nDimensions == n)
 
     def testDimensionsAsVariables(self):
         '''Suppliy list of variables as dimensions argument'''
-        for (i, f) in enumerate(self.lFunctions):
-            n = i + 1
-            variables = [variableTypes.ContinuousVariable()
-                         for j in range(n)] #@UnusedVariable
-            optimizer = ASOP(f, variables)
-            self.assertTrue(len(optimizer.dimensions) == n)
+        for n in [1, 2, 4, 5]:
+            for f in self.lFunctions:
+                variables = [variableTypes.ContinuousVariable()
+                             for j in range(n)] #@UnusedVariable
+                optimizer = ASOP(f, variables)
+                self.assertTrue(len(optimizer.dimensions) == n)
 
     def testDimensionsInvalidNumber(self):
         #supply negative int or non-int string
@@ -79,22 +87,23 @@ class TestInstatination(unittest.TestCase):
     def testDimensionsHaveNames(self):
         '''Dimensions created by default should have names'''
         for f in self.lFunctions:
-            optimizer = ASOP(f)
-            for dimension in optimizer.dimensions:
-                self.assertTrue(hasattr(dimension, 'name'))
-                self.assertTrue(bool(dimension.name))
+            for n in [2, 4, 6]:
+                optimizer = ASOP(f, n)
+                for dimension in optimizer.dimensions:
+                    self.assertTrue(hasattr(dimension, 'name'))
+                    self.assertTrue(bool(dimension.name))
 
 
 class TestFunctionality(unittest.TestCase):
     '''Various functionality tests'''
 
 
-    def createDummyObject(self):
+    def createDummyObject(self, n=2):
         '''Create a dummy ASOP object'''
-        def funcTwoParams(x, y):
-            #Rosenbrock function
-            return(1 - x) ** 2 + 100 * (y - x**2)**2
-        optimizer = ASOP(funcTwoParams)
+        def f1(p):
+            return np.sum(np.square(p))
+
+        optimizer = ASOP(f1, n)
         return optimizer
 
     def testLearnArgumensDifferentLength(self):
@@ -139,22 +148,43 @@ class TestFunctionality(unittest.TestCase):
         obj = self.createDummyObject()
         for t in range(TIMES): #@UnusedVariable
             for n in np.logspace(0, 4, SIZE).astype(int):
-                s = obj.sample(SIZE)
-                self.assertTrue(len(s) == n)
+                s = obj.sample(int(n)) #@UnusedVariable
 
-
-
-    def testTrainManyTimes(self):
+    def testSampleSize(self):
         TIMES = 100
         SIZE = 20
         obj = self.createDummyObject()
         for t in range(TIMES): #@UnusedVariable
             for n in np.logspace(0, 4, SIZE).astype(int):
+                s = obj.sample(int(n))
+                self.assertTrue(len(s) == n)
+
+
+
+    def testTrainManyTimes(self):
+        '''Train many times. Test for stability and returned population size'''
+        TIMES = 50
+        SIZE = 10
+        obj = self.createDummyObject()
+        for t in range(TIMES): #@UnusedVariable
+            for n in np.logspace(0, 3, SIZE).astype(int):
                 nToReturn = max(1, int(n / 2))
                 s = obj.train(n, nToReturn=nToReturn)
                 self.assertTrue(len(s) == nToReturn)
 
 
+    def testTrainWithReturnValueGreaterThanN(self):
+        ''' On training, specify # to return greater than training size '''
+        TIMES = 10
+        SIZE = 110
+        obj = self.createDummyObject()
+        for t in range(TIMES): #@UnusedVariable
+            print 'x'
+            for n in np.logspace(0, 3, SIZE).astype(int):
+                nToReturn = n * 2
+                s = obj.train(n, nToReturn=nToReturn)
+                self.assertTrue(len(s) == n)
+                print '.',
 
 
 if __name__ == "__main__":
