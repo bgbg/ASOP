@@ -53,23 +53,32 @@ class ASOP:
         if dimensions is None:
             msg = 'Dimensions cannot be `None`'
             raise ValueError(msg)
-        if isinstance(dimensions, types.StringTypes):
-            stopped here stopped here stopped here dimensions = int(dimensions)
+        nargs = None
         try:
             iter(dimensions)
         except:
-            #need to guess
             nargs = int(dimensions)
+        else:
+            if isinstance(dimensions, types.StringTypes):
+                nargs = int(float(dimensions))
+            else:
+                dimensions = list(dimensions)
+                attributes = ['random', 'alterSamplingDistribution',
+                          'applySamplingScore']
+                for d in dimensions:
+                    for a in attributes:
+                        if not hasattr(d, a):
+                            msg = 'Variable does not have attribute "%s"'%a
+                            raise ValueError(msg)
+
+        if nargs is not None:
+            if nargs < 1:
+                msg = 'Illegal number of argument. Must be 1 or more'
+                raise ValueError(msg)
             dimensions = [variableTypes.ContinuousVariable(name='X%d'%i) \
                           for i in range(nargs)]
-        else:
-            attributes = ['random', 'alterSamplingDistribution',
-                          'applySamplingScore']
-            for d in dimensions:
-                for a in attributes:
-                    assert hasattr(d, a), \
-                        'Variable does not have attribute "%s"'%a
-            dimensions = list(dimensions)
+
+
         return dimensions
 
     def train(self, n=1, nToReturn=0):

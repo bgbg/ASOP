@@ -47,7 +47,7 @@ class TestInstatination(unittest.TestCase):
                 optimizer = ASOP(f, n)
                 self.assertTrue(len(optimizer.dimensions) == n)
                 optimizer = ASOP(f, str(n))
-                self.assertTrue(optimizer.nDimensions == n)
+                self.assertTrue(len(optimizer.dimensions) == n)
 
     def testDimensionsAsVariables(self):
         '''Suppliy list of variables as dimensions argument'''
@@ -60,7 +60,7 @@ class TestInstatination(unittest.TestCase):
 
     def testDimensionsInvalidNumber(self):
         #supply negative int or non-int string
-        for p in [-1, -2, 0, 1.2, '1.23']:
+        for p in [-1, -2, 0, None, 'five']:
             for f in self.lFunctions:
                 try:
                     optimizer = ASOP(f, p) #@UnusedVariable
@@ -176,15 +176,13 @@ class TestFunctionality(unittest.TestCase):
     def testTrainWithReturnValueGreaterThanN(self):
         ''' On training, specify # to return greater than training size '''
         TIMES = 10
-        SIZE = 110
+        SIZE = 10
         obj = self.createDummyObject()
         for t in range(TIMES): #@UnusedVariable
-            print 'x'
             for n in np.logspace(0, 3, SIZE).astype(int):
                 nToReturn = n * 2
                 s = obj.train(n, nToReturn=nToReturn)
                 self.assertTrue(len(s) == n)
-                print '.',
 
 
 if __name__ == "__main__":
