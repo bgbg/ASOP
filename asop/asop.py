@@ -1,5 +1,6 @@
 import variableTypes
 import scaling
+import types
 
 MINIMIZE, MAXIMIZE = (-1, 1)
 
@@ -9,18 +10,17 @@ class ASOP:
     '''
 
 
-    def __init__(self, func, dimensions=None, direction=MINIMIZE,
+    def __init__(self, func, dimensions, direction=MINIMIZE,
                  scaling=None):
         '''
 
         @param func: callable. The objective function that needs to be optimized
-        @param dimensions: either None, a number or list
-            of Variable type objects. If None, the proper number of dimensions
-            will be guessed. If `dimensions` is a number, then this number of
-            dimensions will be used. In both these cases `ContinuousVariable`
-            will be used.
+        @param dimensions: a number or list
+            of Variable type objects.
+            If `dimensions` is a number, then this number of
+            dimensions will be used. `ContinuousVariable`
+            will be used will be used in this case.
             One may also pass a list of  variable objects to be used.
-            Default: None
         @param direction: either MINIMIZE or MAXIMIZE. Default: minimize
         @param scaling: scaling function, None (default) or "auto". The scaling
             function is a function that receives a number and returns another
@@ -50,26 +50,35 @@ class ASOP:
 
 
     def _parseDimensionsArgument(self, dimensions):
+        if dimensions is None:
+            msg = 'Dimensions cannot be `None`'
+            raise ValueError(msg)
+        nargs = None
         try:
             iter(dimensions)
         except:
-            #need to guess
-            if dimensions is None:
-                #need to guess
-                import inspect
-                nargs = len(inspect.getargspec(self.func).args)
+            nargs = int(dimensions)
+        else:
+            if isinstance(dimensions, types.StringTypes):
+                nargs = int(float(dimensions))
             else:
-                nargs = int(dimensions)
+                dimensions = list(dimensions)
+                attributes = ['random', 'alterSamplingDistribution',
+                          'applySamplingScore']
+                for d in dimensions:
+                    for a in attributes:
+                        if not hasattr(d, a):
+                            msg = 'Variable does not have attribute "%s"'%a
+                            raise ValueError(msg)
+
+        if nargs is not None:
+            if nargs < 1:
+                msg = 'Illegal number of argument. Must be 1 or more'
+                raise ValueError(msg)
             dimensions = [variableTypes.ContinuousVariable(name='X%d'%i) \
                           for i in range(nargs)]
-        else:
-            attributes = ['random', 'alterSamplingDistribution',
-                          'applySamplingScore']
-            for d in dimensions:
-                for a in attributes:
-                    assert hasattr(d, a), \
-                        'Variable does not have attribute "%s"'%a
-            dimensions = list(dimensions)
+
+
         return dimensions
 
     def train(self, n=1, nToReturn=0):
